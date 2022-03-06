@@ -1,0 +1,12 @@
+note over browser:
+User submits form with new content
+included in the Post request
+as a JSON file:
+{content: "new note",
+ date: "2022-03-06T22:09:36.487Z"}
+JS Code updates page with 
+the new note
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: Status 201 message: "note created"

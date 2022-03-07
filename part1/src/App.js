@@ -1,18 +1,35 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-const Header = (props) => <h1>{props.text}</h1>;
+const Header = ({ text }) => <h1>{text}</h1>;
 
-const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>;
+const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
-const Feedback = ({text, numVotes}) => <p>{text} {numVotes}</p>;
+const Feedback = ({ text, num }) => (
+  <p>
+    {text} {num}
+  </p>
+);
 
-const Statistics = ({good, neutral, bad}) => {
-  return (<>
-    <Feedback text="good" numVotes={good} />
-    <Feedback text="neutral" numVotes={neutral} />
-    <Feedback text="bad" numVotes={bad} />
-  </>);
-}
+const Statistics = ({ good, neutral, bad }) => {
+  
+  const calcAvgFeedback = (good, neutral, bad) => {
+    if (good + neutral + bad === 0) { // avoid division by 0
+      return 0;
+    }
+    return (good - bad) / (good + neutral + bad);
+  };
+
+  return (
+    <>
+      <Feedback text="good" num={good} />
+      <Feedback text="neutral" num={neutral} />
+      <Feedback text="bad" num={bad} />
+      <Feedback text="all" num={good + neutral + bad} />
+      <Feedback text="average" num={calcAvgFeedback(good, neutral, bad)} />
+      <p>positive {good / (good + neutral + bad) * 100} %</p>
+    </>
+  );
+};
 
 const App = () => {
   // save clicks of each button to its own state
@@ -27,13 +44,13 @@ const App = () => {
   return (
     <div>
       <Header text="give feedback" />
-      <Button onClick={increaseGoodByOne} text="good"/>
-      <Button onClick={increaseNeutralByOne} text="neutral"/>
-      <Button onClick={increaseBadByOne} text="bad"/>
+      <Button onClick={increaseGoodByOne} text="good" />
+      <Button onClick={increaseNeutralByOne} text="neutral" />
+      <Button onClick={increaseBadByOne} text="bad" />
       <Header text="statistics" />
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

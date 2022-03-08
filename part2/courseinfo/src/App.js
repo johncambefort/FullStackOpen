@@ -1,45 +1,5 @@
-const Header = ({ course, big }) => {
-  if (big) {
-    return <h1>{course.name}</h1>;
-  } else {
-    return <h3>{course.name}</h3>;
-  }
-};
-
-const Total = ({ sum }) => <b>Total of {sum} exercises</b>;
-
-const Part = ({ part }) => (
-  <p>
-    {part.name} {part.exercises}
-  </p>
-);
-
-const Content = ({ parts }) => (
-  <>
-    {parts.map(
-      (
-        part // to handle arbitrary number of Parts
-      ) => (
-        <Part part={part} />
-      )
-    )}
-  </>
-);
-
-const Course = ({ course }) => {
-  const calcSum = (parts) =>
-    parts.reduce((sum, part) => {
-      return sum + part.exercises;
-    }, 0);
-
-  return (
-    <>
-      <Header course={course} />
-      <Content parts={course.parts} />
-      <Total sum={calcSum(course.parts)} />
-    </>
-  );
-};
+import Course from "./components/Course";
+import Header from "./components/Header";
 
 const App = () => {
   const courses = [
@@ -91,7 +51,7 @@ const App = () => {
     <>
       <Header course={{ name: "Web development curriculum" }} big={true} />
       {courses.map((course) => (
-        <Course course={course} />
+        <Course key={course.id} course={course} />
       ))}
     </>
   );

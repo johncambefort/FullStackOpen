@@ -1,3 +1,6 @@
 **/node_modules/
 **/.vscode
 **/.gitignore
+
+# Specific directories I want to omit for some reason
+part2/lecture/

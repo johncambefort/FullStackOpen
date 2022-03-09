@@ -2,5 +2,7 @@
 **/.vscode
 **/.gitignore
 
+# Omit any lecture notes
+**/lecture/
+
 # Specific directories I want to omit for some reason
-part2/lecture/

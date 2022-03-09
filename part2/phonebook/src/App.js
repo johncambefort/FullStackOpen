@@ -26,15 +26,24 @@ const App = () => {
       id: persons.length + 1,
     }; // Construct a new Person object
 
-    if (persons.find((p) => p.name === personObj.name)) {
-      alert(`${personObj.name} already in the phonebook`);
+    let person = persons.find((p) => p.name === personObj.name);
+    if (person) { // already exits
+      if(person.phone !== personObj.phone) {
+        if(window.confirm(`${person.name} is already in the phonebook; update number?`)) {
+          personObj.id = person.id; // use original ID
+          contactService
+            .update(person.id, personObj)
+            .then(response => console.log(response));
+          setPersons(persons.map(p => p.id !== personObj.id ? p : personObj));
+        }
+      }
     } else {
       // save to database
       contactService
         .create(personObj)
         .then(response => {
           console.log(response);
-          setPersons(persons.concat(personObj)); // Concat to persons, set state
+          setPersons(persons.concat(personObj));
         })
     }
   };
@@ -43,7 +52,7 @@ const App = () => {
     setNewName(event.target.value);
   };
 
-  const handleNewPhone = (event) => {
+  const handleNewPhone = (event) => {    
     setNewPhone(event.target.value);
   };
 

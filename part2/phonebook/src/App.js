@@ -29,7 +29,13 @@ const App = () => {
     if (persons.find((p) => p.name === personObj.name)) {
       alert(`${personObj.name} already in the phonebook`);
     } else {
-      setPersons(persons.concat(personObj)); // Concat to persons, set state
+      // save to database
+      axios
+        .post("http://localhost:3001/persons", personObj)
+        .then(response => {
+          console.log(response);
+          setPersons(persons.concat(personObj)); // Concat to persons, set state
+        })
     }
   };
 

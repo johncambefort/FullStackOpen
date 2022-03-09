@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
+import contactService from "./services/contacts"
 import Person from "./components/Person";
 import Input from "./components/Input";
 import Button from "./components/Button";
@@ -11,10 +11,10 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        setPersons(response.data)
+    contactService
+      .getAll()
+      .then(initialContacts => {
+        setPersons(initialContacts)
       })
   }, [])
 
@@ -30,8 +30,8 @@ const App = () => {
       alert(`${personObj.name} already in the phonebook`);
     } else {
       // save to database
-      axios
-        .post("http://localhost:3001/persons", personObj)
+      contactService
+        .create(personObj)
         .then(response => {
           console.log(response);
           setPersons(persons.concat(personObj)); // Concat to persons, set state

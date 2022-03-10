@@ -48,7 +48,12 @@ const App = () => {
           personObj.id = person.id; // use original ID
           contactService
             .update(person.id, personObj)
-            .then((response) => console.log(response));
+            .then((response) => console.log(response))
+            .catch((error) => {
+              setPersons(persons.filter((p) => p.id !== person.id)); // local delete
+              setAddedMessage(`Error: ${personObj.name} already deleted from phonebook!`);
+              setTimeout(() => setAddedMessage(null), 5000);
+            });
           setPersons(
             persons.map((p) => (p.id !== personObj.id ? p : personObj))
           );
@@ -87,7 +92,7 @@ const App = () => {
   const handleDelete = (person) => {
     if (window.confirm(`Are you sure you want to delete ${person.name}?`)) {
       contactService
-        .remove(person.id)
+        .remove(person.id, person)
         .then((response) => {
           console.log("deleted!");
           setPersons(persons.filter((p) => p.id !== person.id)); // local delete

@@ -21,7 +21,6 @@ const App = () => {
   const getNextAvailableId = () => {
     for(let i = 1; i < persons.length + 1; i++) {
       if(!persons.find((p) => p.id === i)) {
-        console.log("here");
         return i;
       }
     }
@@ -90,10 +89,14 @@ const App = () => {
       contactService
         .remove(person.id)
         .then((response) => {
-          console.log(response);
+          console.log("deleted!");
           setPersons(persons.filter((p) => p.id !== person.id)); // local delete
         })
-        .catch((error) => alert(error));
+        .catch((error) => {
+          // alert(`The contact was previously deleted from the server!`)
+          console.log("Bad delete attempt");
+          setPersons(persons.filter((p) => p.id !== person.id)); // local delete
+        })
     }
   };
 

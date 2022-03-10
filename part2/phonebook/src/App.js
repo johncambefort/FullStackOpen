@@ -3,12 +3,14 @@ import contactService from "./services/contacts";
 import Person from "./components/Person";
 import Input from "./components/Input";
 import Button from "./components/Button";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [addedMessage, setAddedMessage] = useState(null);
 
   useEffect(() => {
     contactService.getAll().then((initialContacts) => {
@@ -16,13 +18,24 @@ const App = () => {
     });
   }, []);
 
+  const getNextAvailableId = () => {
+    for(let i = 1; i < persons.length + 1; i++) {
+      if(!persons.find((p) => p.id === i)) {
+        console.log("here");
+        return i;
+      }
+    }
+    return persons.length + 1;
+  }
+
   const addPerson = (event) => {
     event.preventDefault();
     const personObj = {
       name: newName,
       phone: newPhone,
-      id: persons.length + 1,
+      id: getNextAvailableId(),
     }; // Construct a new Person object
+    console.log(personObj.id);
 
     let person = persons.find((p) => p.name === personObj.name);
     if (person) {
@@ -47,6 +60,8 @@ const App = () => {
       contactService.create(personObj).then((response) => {
         console.log(response);
         setPersons(persons.concat(personObj));
+        setAddedMessage(`Added ${personObj.name}`);
+        setTimeout(() => {setAddedMessage(null)}, 5000);
       });
     }
   };
@@ -85,6 +100,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification text={addedMessage} />
       <Input
         text={"filter shown with"}
         value={newFilter}

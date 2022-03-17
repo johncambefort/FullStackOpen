@@ -12,9 +12,18 @@ app.use(express.json());
 app.use(morgan("tiny"));
 app.use(cors());
 
+app.get("/info", (request, response) => {
+  Contact.find({}).then((contacts) => {
+    response.send({
+      date: new Date(),
+      info: `Number of contacts currently in the database: ${contacts.length}`
+    });
+  });
+});
+
 app.get("/api/persons", (request, response) => {
-  Contact.find({}).then((persons) => {
-    response.json(persons);
+  Contact.find({}).then((contacts) => {
+    response.json(contacts);
   });
 });
 
@@ -63,7 +72,8 @@ app.delete("/api/persons/:id", (request, response, next) => {
 app.put("/api/persons/:id", (request, response) => {
   const body = request.body;
 
-  const contact = { // ! not a new Contact, just an Object
+  const contact = {
+    // ! not a new Contact, just an Object
     name: body.name,
     number: body.number,
   };

@@ -2,6 +2,9 @@
 **/.vscode
 **/.gitignore
 
+# Omit any .env files
+**/.env
+
 # Omit any lecture notes
 **/lecture/
 

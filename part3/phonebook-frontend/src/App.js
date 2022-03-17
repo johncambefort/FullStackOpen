@@ -18,21 +18,21 @@ const App = () => {
     });
   }, []);
 
-  const getNextAvailableId = () => {
-    for (let i = 1; i < persons.length + 1; i++) {
-      if (!persons.find((p) => p.id === i)) {
-        return i;
-      }
-    }
-    return persons.length + 1;
-  };
+  // const getNextAvailableId = () => {
+  //   for (let i = 1; i < persons.length + 1; i++) {
+  //     if (!persons.find((p) => p.id === i)) {
+  //       return i;
+  //     }
+  //   }
+  //   return persons.length + 1;
+  // };
 
   const addPerson = (event) => {
     event.preventDefault();
     const personObj = {
       name: newName,
       number: newNumber,
-      id: getNextAvailableId(),
+      // id: getNextAvailableId(),
     }; // Construct a new Person object
     console.log(personObj.id);
 

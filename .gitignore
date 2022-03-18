@@ -1,6 +1,7 @@
 **/node_modules/
 **/.vscode
 **/.gitignore
+**/build/
 
 # Omit any .env files
 **/.env

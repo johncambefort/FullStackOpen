@@ -52,7 +52,8 @@ const App = () => {
             .catch((error) => {
               setPersons(persons.filter((p) => p.id !== person.id)); // local delete
               setAddedMessage(
-                `Error: ${personObj.name} already deleted from phonebook!`
+                // `Error: ${personObj.name} already deleted from phonebook!`
+                error.response.data.error
               );
               setTimeout(() => setAddedMessage(null), 5000);
             });
@@ -63,26 +64,35 @@ const App = () => {
       }
     } else {
       // save to database
-      if (personObj.name === "") {
-        setAddedMessage(`Error: name field can't be empty!`);
-        setTimeout(() => {
-          setAddedMessage(null);
-        }, 5000);
-      } else if (personObj.number === "") {
-        setAddedMessage(`Error: number field can't be empty!`);
-        setTimeout(() => {
-          setAddedMessage(null);
-        }, 5000);
-      } else {
-        contactService.create(personObj).then((response) => {
+      // if (personObj.name === "") {
+      //   setAddedMessage(`Error: name field can't be empty!`);
+      //   setTimeout(() => {
+      //     setAddedMessage(null);
+      //   }, 5000);
+      // } else if (personObj.number === "") {
+      //   setAddedMessage(`Error: number field can't be empty!`);
+      //   setTimeout(() => {
+      //     setAddedMessage(null);
+      //   }, 5000);
+      // } else {
+      // }
+      contactService
+        .create(personObj)
+        .then((response) => {
           console.log(response);
           setPersons(persons.concat(personObj));
           setAddedMessage(`Added ${personObj.name}`);
           setTimeout(() => {
             setAddedMessage(null);
           }, 5000);
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+          setAddedMessage(error.response.data.error);
+          setTimeout(() => {
+            setAddedMessage(null);
+          }, 5000);
         });
-      }
     }
   };
 
@@ -115,7 +125,9 @@ const App = () => {
         })
         .catch((error) => {
           // alert(`The contact was previously deleted from the server!`)
-          console.log("Bad delete attempt");
+          // console.log("Bad delete attempt");
+          setAddedMessage(error.response.data.error);
+          setTimeout(() => setAddedMessage(null), 5000);
           setPersons(persons.filter((p) => p.id !== person.id)); // local delete
         });
     }

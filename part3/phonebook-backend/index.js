@@ -41,15 +41,15 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
-  if (!body.name) {
-    return response.status(400).json({
-      error: "Missing name",
-    });
-  } else if (!body.number) {
-    return response.status(400).json({
-      error: "Missing number",
-    });
-  }
+  // if (!body.name) {
+  //   return response.status(400).json({
+  //     error: "Error: Missing name",
+  //   });
+  // } else if (!body.number) {
+  //   return response.status(400).json({
+  //     error: "Error: Missing number",
+  //   });
+  // }
 
   const newContact = new Contact({
     name: body.name,
@@ -96,9 +96,9 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+    return response.status(400).send({ error: "Error: malformatted id" });
   } else if (error.name === "ValidationError") {
-    return response.status(400).json({ error: error.message });
+    return response.status(400).json({ error: `Error: ${error.message}` });
   }
 
   next(error);

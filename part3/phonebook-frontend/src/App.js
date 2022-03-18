@@ -18,21 +18,11 @@ const App = () => {
     });
   }, []);
 
-  // const getNextAvailableId = () => {
-  //   for (let i = 1; i < persons.length + 1; i++) {
-  //     if (!persons.find((p) => p.id === i)) {
-  //       return i;
-  //     }
-  //   }
-  //   return persons.length + 1;
-  // };
-
   const addPerson = (event) => {
     event.preventDefault();
     const personObj = {
       name: newName,
       number: newNumber,
-      // id: getNextAvailableId(),
     }; // Construct a new Person object
     console.log(personObj.id);
 
@@ -51,10 +41,7 @@ const App = () => {
             .then((response) => console.log(response))
             .catch((error) => {
               setPersons(persons.filter((p) => p.id !== person.id)); // local delete
-              setAddedMessage(
-                // `Error: ${personObj.name} already deleted from phonebook!`
-                error.response.data.error
-              );
+              setAddedMessage(error.response.data.error);
               setTimeout(() => setAddedMessage(null), 5000);
             });
           setPersons(
@@ -63,19 +50,6 @@ const App = () => {
         }
       }
     } else {
-      // save to database
-      // if (personObj.name === "") {
-      //   setAddedMessage(`Error: name field can't be empty!`);
-      //   setTimeout(() => {
-      //     setAddedMessage(null);
-      //   }, 5000);
-      // } else if (personObj.number === "") {
-      //   setAddedMessage(`Error: number field can't be empty!`);
-      //   setTimeout(() => {
-      //     setAddedMessage(null);
-      //   }, 5000);
-      // } else {
-      // }
       contactService
         .create(personObj)
         .then((response) => {
@@ -125,7 +99,6 @@ const App = () => {
         })
         .catch((error) => {
           // alert(`The contact was previously deleted from the server!`)
-          // console.log("Bad delete attempt");
           setAddedMessage(error.response.data.error);
           setTimeout(() => setAddedMessage(null), 5000);
           setPersons(persons.filter((p) => p.id !== person.id)); // local delete

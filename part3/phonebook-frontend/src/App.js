@@ -24,7 +24,6 @@ const App = () => {
       name: newName,
       number: newNumber,
     }; // Construct a new Person object
-    console.log(personObj.id);
 
     let person = persons.find((p) => p.name === personObj.name);
     if (person) {
@@ -35,25 +34,32 @@ const App = () => {
             `${person.name} is already in the phonebook; update number?`
           )
         ) {
-          personObj.id = person.id; // use original ID
+          personObj.id = person.id;
           contactService
             .update(person.id, personObj)
-            .then((response) => console.log(response))
+            .then((response) => {
+              setPersons(
+                // Success: update Persons
+                persons.map((p) => (p.id !== personObj.id ? p : personObj))
+              );
+              setAddedMessage(`Updated ${personObj.name} !`);
+              setTimeout(() => setAddedMessage(null), 5000);
+            })
             .catch((error) => {
-              setPersons(persons.filter((p) => p.id !== person.id)); // local delete
+              if (error.response.status === 404) {
+                // Person not in database: delete from local Persons array
+                setPersons(persons.filter((p) => p.id !== personObj.id));
+              }
               setAddedMessage(error.response.data.error);
               setTimeout(() => setAddedMessage(null), 5000);
             });
-          setPersons(
-            persons.map((p) => (p.id !== personObj.id ? p : personObj))
-          );
         }
       }
     } else {
       contactService
         .create(personObj)
         .then((response) => {
-          console.log(response);
+          personObj.id = response.id;
           setPersons(persons.concat(personObj));
           setAddedMessage(`Added ${personObj.name}`);
           setTimeout(() => {

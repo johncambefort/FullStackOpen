@@ -7,5 +7,6 @@
 
 # Omit any lecture notes
 **/lecture/
+**.DS_Store
 
 # Specific directories I want to omit for some reason

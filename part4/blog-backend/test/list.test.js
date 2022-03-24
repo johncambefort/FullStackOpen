@@ -108,3 +108,37 @@ describe("favorite post", () => {
     });
   });
 });
+
+describe("most blog posts", () => {
+  test("of an empty array", () => {
+    const result = listHelper.mostBlogs([]);
+    expect(result).toEqual({});
+  });
+
+  test("of array with one blog post", () => {
+    const result = listHelper.mostBlogs(listWithOneBlog);
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", numPosts: 1 });
+  });
+
+  test("of list with multiple posts", () => {
+    const result = listHelper.mostBlogs(longBlogs);
+    expect(result).toEqual({ author: "Robert C. Martin", numPosts: 3 });
+  });
+});
+
+describe("most likes", () => {
+  test("of empty list is empty object", () => {
+    const result = listHelper.mostLikes([]);
+    expect(result).toEqual({});
+  });
+
+  test("of one blog post", () => {
+    const result = listHelper.mostLikes(listWithOneBlog);
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", likes: 5 });
+  });
+
+  test("of multiple blog posts", () => {
+    const result = listHelper.mostLikes(longBlogs);
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", likes: 17 });
+  });
+});

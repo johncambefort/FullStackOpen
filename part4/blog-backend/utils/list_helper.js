@@ -1,8 +1,25 @@
-
 const dummy = (blogs) => {
   return 1;
-}
+};
+
+const totalLikes = (blogs) => {
+  return blogs.reduce((total, current) => {
+    return total + current.likes;
+  }, 0);
+};
+
+const favoriteBlog = (blogs) => {
+  if (blogs.length === 0) {
+    return {};
+  }
+  
+  return blogs.reduce((favorite, current) => {
+    return current.likes > favorite.likes ? current : favorite;
+  }, blogs[0]);
+};
 
 module.exports = {
-  dummy
-}
+  dummy,
+  totalLikes,
+  favoriteBlog,
+};

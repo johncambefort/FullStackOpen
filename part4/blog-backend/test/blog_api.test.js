@@ -49,6 +49,32 @@ test("id is defined", async () => {
   expect(bps.id).toBeDefined();
 });
 
+test("new blogs are created", async () => {
+  const newPost = {
+    title: "Another one for testing",
+    author: "Not Biscuit",
+    url: "/another/blog/post",
+    likes: 1004,
+  };
+
+  await api
+    .post("/api/blog/")
+    .send(newPost)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  // Get blogs in DB
+  const blogsInDB = await (
+    await BlogPost.find({})
+  ).map((blog) => blog.toJSON());
+
+  console.log(blogsInDB);
+  expect(blogsInDB.length).toBe(coupleOfBlogs.length + 1);
+
+  const titles = blogsInDB.map((blog) => blog.title);
+  expect(titles).toContain("Another one for testing");
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });

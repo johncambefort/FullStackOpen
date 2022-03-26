@@ -1,13 +1,13 @@
 const blogPostsRouter = require("express").Router();
 const BlogPost = require("../models/blogpost");
 
-blogPostsRouter.get("/", (request, response) => {
+blogPostsRouter.get("/", async (request, response) => {
   BlogPost.find({}).then((blogpost) => {
     response.json(blogpost);
   });
 });
 
-blogPostsRouter.get("/:id", (request, response, next) => {
+blogPostsRouter.get("/:id", async (request, response, next) => {
   BlogPost.findById(request.params.id)
     .then((blogpost) => {
       if (blogpost) {
@@ -19,18 +19,13 @@ blogPostsRouter.get("/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-blogPostsRouter.post("/", (request, response, next) => {
-  const blogpost = new BlogPost(request.body);
-
-  blogpost
-    .save()
-    .then((savedBlog) => {
-      response.json(savedBlog);
-    })
-    .catch((error) => next(error));
+blogPostsRouter.post("/", async (request, response, next) => {
+  const blogPost = new BlogPost(request.body);
+  const savedBlogPost = await blogPost.save();
+  response.status(201).json(savedBlogPost);
 });
 
-blogPostsRouter.delete("/:id", (request, response, next) => {
+blogPostsRouter.delete("/:id", async (request, response, next) => {
   BlogPost.findByIdAndRemove(request.params.id)
     .then(() => {
       response.status(204).end();
@@ -38,7 +33,7 @@ blogPostsRouter.delete("/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-// blogPostsRouter.put("/:id", (request, response, next) => {
+// blogPostsRouter.put("/:id", async (request, response, next) => {
 //   const body = request.body;
 
 //   const contact = {

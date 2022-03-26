@@ -37,17 +37,16 @@ test("GET: correct number of blog posts", async () => {
   expect(response.body).toHaveLength(coupleOfBlogs.length);
 });
 
-test("blog posts are returned as json", async () => {
-  await api
-    .get("/api/blog")
+test("id is defined", async () => {
+  const response = await api
+    .get("/api/blog/")
     .expect(200)
     .expect("Content-Type", /application\/json/);
-});
 
-test("there are two blogs", async () => {
-  const response = await api.get("/api/blog");
+  const bps = response.body[0];
+  console.log(bps);
 
-  expect(response.body).toHaveLength(2);
+  expect(bps.id).toBeDefined();
 });
 
 afterAll(() => {

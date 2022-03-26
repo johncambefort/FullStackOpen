@@ -34,7 +34,7 @@ test("GET: correct number of blog posts", async () => {
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
-  expect(response).toHaveLength(coupleOfBlogs.length);
+  expect(response.body).toHaveLength(coupleOfBlogs.length);
 });
 
 test("blog posts are returned as json", async () => {

@@ -18,6 +18,19 @@ blogPostsRouter.get("/:id", async (request, response) => {
 });
 
 blogPostsRouter.post("/", async (request, response) => {
+  // const body = request.body;
+  // const user = await User.findById(body.userId);
+  // const blogPost = await new BlogPost({
+  //   author: body.author,
+    
+  // });
+  
+  // const savedBlogPost = await blogPost.save();
+  // user.blogs = user.blogs.concat(savedBlogPost._id);
+  // await user.save();
+
+  // return response.status(201).json(savedBlogPost);
+  
   const blogPost = new BlogPost(request.body);
   const savedBlogPost = await blogPost.save();
   return response.status(201).json(savedBlogPost);

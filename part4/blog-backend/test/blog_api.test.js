@@ -216,6 +216,38 @@ describe("user auth: 1 user in db", () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toEqual(usersAtStart);
   });
+
+  test("username and password are required", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUserWithoutUsername = {
+      name: "biscuitsdog",
+      password: "anotherPwd",
+    };
+
+    const responseNoUsername = await api
+      .post("/api/users")
+      .send(newUserWithoutUsername)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(responseNoUsername.body.error).toContain("Path `username` is required");
+
+    const newUserWithoutPassword = {
+      username: "someFella"
+    }
+    const responseNoPassword = await api
+      .post("/api/users")
+      .send(newUserWithoutPassword)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(responseNoPassword.body.error).toContain("password must be at least 3 characters long");
+
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  });
 });
 
 afterAll(() => {

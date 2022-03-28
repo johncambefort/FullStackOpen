@@ -1,13 +1,14 @@
 const bcrypt = require("bcrypt");
 const usersRouter = require("express").Router();
 const User = require("../models/user");
+const logger = require("../utils/logger");
 
 usersRouter.get("/", async (request, response) => {
   const users = await User.find({});
   return response.json(users);
 });
 
-usersRouter.post("/", async (request, response) => {
+usersRouter.post("/", async (request, response, next) => {
   const { username, name, password } = request.body;
 
   const existingUser = await User.findOne({ username });
@@ -15,6 +16,12 @@ usersRouter.post("/", async (request, response) => {
   if (existingUser) {
     return response.status(400).json({
       error: "username must be unique",
+    });
+  }
+
+  if (!password || password.length < 3) {
+    return response.status(400).json({
+      error: "password must be at least 3 characters long",
     });
   }
 
@@ -28,7 +35,6 @@ usersRouter.post("/", async (request, response) => {
   });
 
   const savedUser = await user.save();
-
   return response.status(201).json(savedUser);
 });
 

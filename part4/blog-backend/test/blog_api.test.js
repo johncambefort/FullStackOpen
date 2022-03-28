@@ -116,8 +116,31 @@ test("backend error 400 if title or url are missing", async () => {
       .expect(400)
       .expect("Content-Type", /application\/json/);
   });
-  
+
   await Promise.all(promiseArray);
+});
+
+test("deleting a blog post works", async () => {
+  const tempBlogPost = {
+    title: "To be deleted",
+    author: "nobody",
+    url: "Not Biscuit",
+  };
+
+  const response = await api
+    .post("/api/blog/")
+    .send(tempBlogPost)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  console.log(response.body);
+
+  await api
+    .delete(`/api/blog/${response.body.id}`)
+    .expect(204);
+
+  const isInDb = await BlogPost.find({title: "To be deleted"});
+  expect(isInDb).toHaveLength(0);
 });
 
 afterAll(() => {

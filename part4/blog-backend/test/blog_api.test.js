@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
+const { post } = require("../app");
 const app = require("../app");
 const BlogPost = require("../models/blogpost");
 
@@ -64,15 +65,35 @@ test("new blogs are created", async () => {
     .expect("Content-Type", /application\/json/);
 
   // Get blogs in DB
-  const blogsInDB = await (
-    await BlogPost.find({})
-  ).map((blog) => blog.toJSON());
+  const blogsInDB = await BlogPost.find({});
+  const renderedBlogsInDB = await blogsInDB.map((blog) => blog.toJSON());
 
-  console.log(blogsInDB);
-  expect(blogsInDB.length).toBe(coupleOfBlogs.length + 1);
+  expect(renderedBlogsInDB.length).toBe(coupleOfBlogs.length + 1);
 
-  const titles = blogsInDB.map((blog) => blog.title);
+  const titles = renderedBlogsInDB.map((blog) => blog.title);
   expect(titles).toContain("Another one for testing");
+});
+
+test("likes defaults to 0 if missing", async () => {
+  const blogPostWithNoLikes = {
+    title: "This post wasn't very popular",
+    author: "Not Biscuit either",
+    url: "url/without/likes",
+  };
+
+  const response = await api
+    .post("/api/blog")
+    .send(blogPostWithNoLikes)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const savedBlog = await api
+    .get(`/api/blog/${response.body.id}`)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  expect(savedBlog.body.likes).toBeDefined();
+  expect(savedBlog.body.likes).toEqual(0);
 });
 
 afterAll(() => {

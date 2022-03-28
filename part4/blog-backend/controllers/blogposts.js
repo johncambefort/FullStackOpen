@@ -27,19 +27,19 @@ blogPostsRouter.delete("/:id", async (request, response) => {
   return response.status(204).end();
 });
 
-// blogPostsRouter.put("/:id", async (request, response, next) => {
-//   const body = request.body;
+blogPostsRouter.put("/:id", async (request, response) => {
+  const body = request.body;
 
-//   const contact = {
-//     content: body.content,
-//     important: body.important,
-//   };
+  const blogPost = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
+  };
 
-//   Contact.findByIdAndUpdate(request.params.id, contact, { new: true })
-//     .then((updatedContact) => {
-//       response.json(updatedContact);
-//     })
-//     .catch((error) => next(error));
-// });
+  const updatedBlogPost = await BlogPost.findByIdAndUpdate(request.params.id, blogPost, { new: true })
+  return response.status(200).json(updatedBlogPost);
+
+});
 
 module.exports = blogPostsRouter;

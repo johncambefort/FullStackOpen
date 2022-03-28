@@ -133,14 +133,30 @@ test("deleting a blog post works", async () => {
     .expect(201)
     .expect("Content-Type", /application\/json/);
 
-  console.log(response.body);
+  await api.delete(`/api/blog/${response.body.id}`).expect(204);
+
+  const isInDb = await BlogPost.find({ title: "To be deleted" });
+  expect(isInDb).toHaveLength(0);
+});
+
+test("updating a blog post works", async () => {
+  const blogsInDb = await BlogPost.find({});
+  const renderedBlogsInDB = await blogsInDb.map((blog) => blog.toJSON());
+  const firstBlogPostId = renderedBlogsInDB[0].id;
 
   await api
-    .delete(`/api/blog/${response.body.id}`)
-    .expect(204);
+    .put(`/api/blog/${firstBlogPostId}`)
+    .send({
+      title: "Biscuit's Update",
+      author: "Biscuit's Child",
+      url: "/biscuit/child/update",
+      likes: 10497
+    })
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
 
-  const isInDb = await BlogPost.find({title: "To be deleted"});
-  expect(isInDb).toHaveLength(0);
+  const isInDb = await BlogPost.find({ title: "Biscuit's Update" });
+  expect(isInDb).not.toHaveLength(0);
 });
 
 afterAll(() => {

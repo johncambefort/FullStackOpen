@@ -16,8 +16,12 @@ const blogPostSchema = new mongoose.Schema({
   likes: {
     type: Number,
     required: false,
-    default: 0
-  }
+    default: 0,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 blogPostSchema.set("toJSON", {
@@ -28,4 +32,6 @@ blogPostSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("BlogPost", blogPostSchema);
+const BlogPost = mongoose.model("BlogPost", blogPostSchema);
+
+module.exports = BlogPost;

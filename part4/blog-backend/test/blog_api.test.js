@@ -45,7 +45,6 @@ test("id is defined", async () => {
     .expect("Content-Type", /application\/json/);
 
   const bps = response.body[0];
-  console.log(bps);
 
   expect(bps.id).toBeDefined();
 });
@@ -94,6 +93,31 @@ test("likes defaults to 0 if missing", async () => {
 
   expect(savedBlog.body.likes).toBeDefined();
   expect(savedBlog.body.likes).toEqual(0);
+});
+
+test("backend error 400 if title or url are missing", async () => {
+  const blogPosts = [
+    {
+      title: "Test1",
+      author: "Coolio",
+      likes: 193,
+    },
+    {
+      author: "Somedude",
+      url: "/some/dude",
+      likes: 392,
+    },
+  ];
+
+  const promiseArray = blogPosts.map(async (blog) => {
+    await api
+      .post("/api/blog/")
+      .send(blog)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+  });
+  
+  await Promise.all(promiseArray);
 });
 
 afterAll(() => {

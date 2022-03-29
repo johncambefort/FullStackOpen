@@ -3,16 +3,6 @@ const blogPostsRouter = require("express").Router();
 const BlogPost = require("../models/blogpost");
 const User = require("../models/user");
 
-const getTokenFrom = (request) => {
-  const authorization = request.get("authorization");
-
-  if (authorization && authorization.toLowerCase().startsWith("bearer")) {
-    return authorization.substring(7);
-  } else {
-    return null;
-  }
-};
-
 blogPostsRouter.get("/", async (request, response) => {
   const blogs = await BlogPost.find({}).populate("user", {
     username: 1,
@@ -36,7 +26,7 @@ blogPostsRouter.get("/:id", async (request, response) => {
 
 blogPostsRouter.post("/", async (request, response) => {
   const body = request.body;
-  const token = getTokenFrom(request);
+  const token = request.token;
   const decodedToken = jwt.verify(token, process.env.SECRET);
 
   if (!decodedToken.id) {

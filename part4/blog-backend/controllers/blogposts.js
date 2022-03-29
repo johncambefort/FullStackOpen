@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
+const { isBuffer } = require("lodash");
 const blogPostsRouter = require("express").Router();
 const BlogPost = require("../models/blogpost");
 const User = require("../models/user");
+const { userExtractor } = require("../utils/middleware");
 
 blogPostsRouter.get("/", async (request, response) => {
   const blogs = await BlogPost.find({}).populate("user", {
@@ -24,18 +26,15 @@ blogPostsRouter.get("/:id", async (request, response) => {
   }
 });
 
-blogPostsRouter.post("/", async (request, response) => {
+blogPostsRouter.post("/", userExtractor, async (request, response) => {
+  const user = request.user;
   const body = request.body;
-  const token = request.token;
-  const decodedToken = jwt.verify(token, process.env.SECRET);
 
-  if (!decodedToken.id) {
+  if (!user) {
     return response.status(401).json({
       error: "token missing or invalid",
     });
   }
-
-  const user = await User.findById(decodedToken.id);
 
   const blogPost = await new BlogPost({
     title: body.title,
@@ -52,18 +51,16 @@ blogPostsRouter.post("/", async (request, response) => {
   return response.status(201).json(savedBlogPost);
 });
 
-blogPostsRouter.delete("/:id", async (request, response) => {
+blogPostsRouter.delete("/:id", userExtractor, async (request, response) => {
   const blogToDeleteId = request.params.id;
+  const userRequestingDelete = request.user;
 
-  const token = request.token;
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!decodedToken.id) {
+  if(!userRequestingDelete) {
     return response.status(401).json({
       error: "token missing or invalid",
     });
   }
 
-  const userRequestingDelete = await User.findById(decodedToken.id);
   const blogToDelete = await BlogPost.findById(blogToDeleteId);
 
   if (blogToDelete.user.toString() !== userRequestingDelete._id.toString()) {

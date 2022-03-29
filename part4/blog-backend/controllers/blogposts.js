@@ -3,12 +3,18 @@ const BlogPost = require("../models/blogpost");
 const User = require("../models/user");
 
 blogPostsRouter.get("/", async (request, response) => {
-  const blogs = await BlogPost.find({});
+  const blogs = await BlogPost.find({}).populate("user", {
+    username: 1,
+    name: 1,
+  });
   response.json(blogs);
 });
 
 blogPostsRouter.get("/:id", async (request, response) => {
-  const blogpost = await BlogPost.findById(request.params.id);
+  const blogpost = await BlogPost.findById(request.params.id).populate("user", {
+    username: 1,
+    name: 1,
+  });
 
   if (blogpost) {
     return response.json(blogpost);
@@ -18,22 +24,26 @@ blogPostsRouter.get("/:id", async (request, response) => {
 });
 
 blogPostsRouter.post("/", async (request, response) => {
-  // const body = request.body;
-  // const user = await User.findById(body.userId);
-  // const blogPost = await new BlogPost({
-  //   author: body.author,
-    
-  // });
-  
-  // const savedBlogPost = await blogPost.save();
-  // user.blogs = user.blogs.concat(savedBlogPost._id);
-  // await user.save();
+  const body = request.body;
+  const user = await User.findById(body.userId);
 
-  // return response.status(201).json(savedBlogPost);
-  
-  const blogPost = new BlogPost(request.body);
+  const blogPost = await new BlogPost({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+    user: user._id,
+  });
+
   const savedBlogPost = await blogPost.save();
+  user.blogs = user.blogs.concat(savedBlogPost._id);
+  await user.save();
+
   return response.status(201).json(savedBlogPost);
+
+  // const blogPost = new BlogPost(request.body);
+  // const savedBlogPost = await blogPost.save();
+  // return response.status(201).json(savedBlogPost);
 });
 
 blogPostsRouter.delete("/:id", async (request, response) => {

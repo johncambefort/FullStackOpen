@@ -169,7 +169,11 @@ describe("user auth: 1 user in db", () => {
     await User.deleteMany({});
 
     const passwordHash = await bcrypt.hash("secret", 10);
-    const user = new User({ username: "root", passwordHash });
+    const user = new User({
+      username: "root",
+      name: "SuperUser",
+      passwordHash,
+    });
 
     await user.save();
   });
@@ -231,19 +235,22 @@ describe("user auth: 1 user in db", () => {
       .expect(400)
       .expect("Content-Type", /application\/json/);
 
-    expect(responseNoUsername.body.error).toContain("Path `username` is required");
+    expect(responseNoUsername.body.error).toContain(
+      "Path `username` is required"
+    );
 
     const newUserWithoutPassword = {
-      username: "someFella"
-    }
+      username: "someFella",
+    };
     const responseNoPassword = await api
       .post("/api/users")
       .send(newUserWithoutPassword)
       .expect(400)
       .expect("Content-Type", /application\/json/);
 
-    expect(responseNoPassword.body.error).toContain("password must be at least 3 characters long");
-
+    expect(responseNoPassword.body.error).toContain(
+      "password must be at least 3 characters long"
+    );
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toEqual(usersAtStart);
